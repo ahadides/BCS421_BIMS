@@ -1,0 +1,36 @@
+<!-- res/layout/activity_item_detail.xml -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Add your UI components here, such as TextViews, ImageViews, etc. -->
+    <ImageView
+        android:id="@+id/itemImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/placeholder_image" />
+
+    <TextView
+        android:id="@+id/itemTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemImageView"
+        android:layout_marginTop="16dp"
+        android:text="Item Title"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/itemPriceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemTitleTextView"
+        android:layout_marginTop="8dp"
+        android:text="Item Price"
+        android:textSize="16sp" />
+
+    <!-- Add more TextViews, ImageViews, etc., to display other item details -->
+
+</RelativeLayout>
