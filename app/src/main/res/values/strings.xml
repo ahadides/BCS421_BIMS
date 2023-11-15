@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RegistrationApp</string>
+    <string name="app_name">BIMS</string>
     <string name="logo">Logo</string>
     <string name="Email">Example@Gmail.com</string>
     <string name="password">*********</string>
