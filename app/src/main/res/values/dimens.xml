@@ -2,4 +2,5 @@
 <resources>
     <dimen name="recycler_view_font_size">18sp</dimen>
     <dimen name="item_inv_lay_weight">1</dimen>
+    <dimen name="fab_image_size">64dp</dimen>
 </resources>
