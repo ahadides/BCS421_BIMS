@@ -32,6 +32,14 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
+        //Set up Camera Activity button
+        val cameraActivityButton = findViewById<Button>(R.id.button)
+        cameraActivityButton.setOnClickListener {
+            //Redirect to the registration activity
+            val intent = Intent(this, Inventory::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun signOut() {
