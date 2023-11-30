@@ -8,7 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import edu.farmingdale.bcs421_bims.R.layout.item_inventory_layout
 
-class InventorySearchAdapter(private val itemList: List<Item>) :
+// InventorySearchAdapter.kt
+class InventorySearchAdapter(private val itemList: List<Item>, private val onItemClick: (Item) -> Unit) :
     RecyclerView.Adapter<InventorySearchAdapter.InventoryViewHolder>() {
 
     // ViewHolder class that holds references to the views for each data item
@@ -22,8 +23,19 @@ class InventorySearchAdapter(private val itemList: List<Item>) :
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InventoryViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(item_inventory_layout, parent, false)
-        return InventoryViewHolder(view)
+            .inflate(R.layout.item_inventory_layout, parent, false)
+
+        // Set a click listener for each item view
+        val viewHolder = InventoryViewHolder(view)
+        view.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                val clickedItem = itemList[position]
+                onItemClick.invoke(clickedItem)
+            }
+        }
+
+        return viewHolder
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -37,5 +49,4 @@ class InventorySearchAdapter(private val itemList: List<Item>) :
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = itemList.size
-
 }

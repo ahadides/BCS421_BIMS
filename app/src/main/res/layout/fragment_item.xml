@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/BimColorBlue"
+        tools:context=".ItemFragment"
+        tools:visibility="visible">
+        <include
+            android:id="@+id/include"
+            layout="@layout/toolbar" />
+
+        <TextView
+            android:id="@+id/textViewQua"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quantity:"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/textViewUpc"
+            app:layout_constraintTop_toBottomOf="@+id/textViewLoc" />
+
+        <TextView
+            android:id="@+id/textViewLoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loc:"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/textViewUpc"
+            app:layout_constraintTop_toBottomOf="@+id/textViewUpc" />
+
+        <TextView
+            android:id="@+id/textViewUpc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UPC:"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/textViewName"
+            app:layout_constraintTop_toBottomOf="@+id/textViewName" />
+
+
+
+        <ImageView
+            android:id="@+id/itemImage"
+            android:layout_width="337dp"
+            android:layout_height="205dp"
+            android:layout_marginTop="72dp"
+            android:background="@drawable/round_rectangle"
+            android:src="@drawable/logo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/include"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="159dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="Name"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/itemImage"
+            app:layout_constraintTop_toBottomOf="@+id/itemImage" />
+
+        <EditText
+            android:id="@+id/QuantityToEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:minHeight="48dp"
+            android:text="1"
+            app:layout_constraintStart_toEndOf="@+id/textViewLoc3"
+            app:layout_constraintTop_toBottomOf="@+id/textViewQua" />
+
+        <TextView
+            android:id="@+id/textViewLoc3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Quantity:"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/textViewQua"
+            app:layout_constraintTop_toBottomOf="@+id/textViewQua" />
+
+        <Button
+            android:id="@+id/addQuantity"
+            android:layout_width="123dp"
+            android:layout_height="51dp"
+            android:layout_marginTop="48dp"
+            android:text="ADD"
+
+            app:layout_constraintEnd_toStartOf="@+id/remQuantity"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/textViewLoc3"
+            app:layout_constraintTop_toBottomOf="@+id/QuantityToEdit" />
+
+        <Button
+            android:id="@+id/remQuantity"
+            android:layout_width="123dp"
+            android:layout_height="51dp"
+            android:layout_marginTop="48dp"
+            android:text="REMOVE"
+            app:layout_constraintEnd_toEndOf="@+id/QuantityToEdit"
+            app:layout_constraintTop_toBottomOf="@+id/QuantityToEdit" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,12 +29,12 @@ class SearchActivity : AppCompatActivity() {
             Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
             Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
             Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
-            )
+        )
 
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = InventorySearchAdapter(items)
+        //recyclerView.adapter = InventorySearchAdapter(items)
 
         val dividerItemDecoration = DividerItemDecoration(recyclerView.context,
             (recyclerView.layoutManager as LinearLayoutManager).orientation)
