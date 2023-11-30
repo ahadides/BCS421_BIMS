@@ -58,7 +58,7 @@ class Inventory : AppCompatActivity() {
         when (requestCode) {
             REQUEST_CAMERA_PERMISSION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Permission was granted, use the camera
+                    //Permission was granted, use the camera
                     binding.btnCameraPermission.visibility = View.GONE
                     startCamera()
                 } else {
