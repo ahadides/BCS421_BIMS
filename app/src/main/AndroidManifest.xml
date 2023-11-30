@@ -38,6 +38,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
+            android:name=".Inventory"
+            android:exported="false" />
+        <activity
+            android:name=".ProductDetails"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
