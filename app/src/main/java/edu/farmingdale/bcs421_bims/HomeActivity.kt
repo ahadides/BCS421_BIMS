@@ -29,7 +29,7 @@ class HomeActivity : AppCompatActivity() {
         val searchActivityButton = findViewById<Button>(R.id.bnSearchActivity)
         searchActivityButton.setOnClickListener {
             //Redirect to the registration activity
-            val intent = Intent(this, SearchActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
         //Set up Camera Activity button

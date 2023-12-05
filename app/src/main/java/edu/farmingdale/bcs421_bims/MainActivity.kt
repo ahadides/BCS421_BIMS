@@ -24,33 +24,19 @@ class MainActivity : AppCompatActivity() {
         binding.navView.setOnItemSelectedListener {
 
             when(it.itemId){
-
                 R.id.navigation_home -> replaceFragment(SearchFragment())
                 R.id.navigation_dashboard -> replaceFragment(SearchFragment())
                 R.id.navigation_notifications -> replaceFragment(SearchFragment())
-
                 else ->{
-
-
-
                 }
-
             }
-
             true
-
         }
-
-
     }
-
     private fun replaceFragment(fragment : Fragment){
-
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fram_layout,fragment)
         fragmentTransaction.commit()
-
-
     }
 }

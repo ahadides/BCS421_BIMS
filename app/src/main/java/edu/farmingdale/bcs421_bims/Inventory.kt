@@ -5,12 +5,13 @@ import android.Manifest
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.CameraXThreads.TAG
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -27,23 +28,30 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 class Inventory : AppCompatActivity() {
 
     private lateinit var binding: ActivityInventoryBinding
     private lateinit var barcodeScanner: BarcodeScanner
+    private var isScannerEnabled = true
 
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1001
         private val TAG = Inventory::class.java.simpleName
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInventoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
         barcodeScanner = BarcodeScanning.getClient()
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             binding.btnCameraPermission.visibility = View.GONE
             startCamera()
         } else {
@@ -52,7 +60,12 @@ class Inventory : AppCompatActivity() {
             }
         }
     }
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
@@ -62,7 +75,11 @@ class Inventory : AppCompatActivity() {
                     binding.btnCameraPermission.visibility = View.GONE
                     startCamera()
                 } else {
-                    Toast.makeText(this, "Camera permission is required to use this feature", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Camera permission is required to use this feature",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 return
             }
@@ -83,24 +100,30 @@ class Inventory : AppCompatActivity() {
             val imageAnalysis = ImageAnalysis.Builder()
                 .build()
                 .also {
-                    it.setAnalyzer(ContextCompat.getMainExecutor(this), ImageAnalysis.Analyzer { imageProxy ->
-                        processImageProxy(imageProxy)
-                    })
+                    it.setAnalyzer(
+                        ContextCompat.getMainExecutor(this),
+                        ImageAnalysis.Analyzer { imageProxy ->
+                            processImageProxy(imageProxy)
+                        })
                 }
             try {
                 cameraProvider.unbindAll()
 
                 cameraProvider.bindToLifecycle(
-                    this, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalysis)
+                    this, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalysis
+                )
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
         }, ContextCompat.getMainExecutor(this))
     }
 
-    @OptIn(ExperimentalGetImage::class) private fun processImageProxy(imageProxy: ImageProxy) {
+    @OptIn(ExperimentalGetImage::class)
+    private fun processImageProxy(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image
-        if (mediaImage != null) {
+        if (mediaImage != null && isScannerEnabled) {
+            //Disable scanner after successful scan
+            isScannerEnabled = false
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
             barcodeScanner.process(image)
@@ -113,15 +136,22 @@ class Inventory : AppCompatActivity() {
                                 binding.textViewBarcodeData.text = rawValue
                                 getProductDetails(rawValue)
                             }
+                            //Break after first successful scan
+                            break
                         } else {
                             Log.d(TAG, "Barcode value is null")
                         }
                     }
                 }
                 .addOnFailureListener {
+                    //Add failure for handle if needed
                 }
                 .addOnCompleteListener {
                     imageProxy.close()
+                    //Re-enable scanner after a delay
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        isScannerEnabled = true
+                    }, 5000)
                 }
         } else {
             imageProxy.close()
@@ -129,9 +159,17 @@ class Inventory : AppCompatActivity() {
     }
 
     private fun checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                REQUEST_CAMERA_PERMISSION
+            )
         }
     }
 
@@ -143,31 +181,30 @@ class Inventory : AppCompatActivity() {
 
         val apiService = retrofit.create(UPCApiService::class.java)
         apiService.lookupUPC(barcode).enqueue(object : Callback<ProductResponse> {
-            override fun onResponse(call: Call<ProductResponse>, response: Response<ProductResponse>) {
+            override fun onResponse(
+                call: Call<ProductResponse>,
+                response: Response<ProductResponse>
+            ) {
                 Log.d(TAG, "API Response: ${response.raw()}")
 
                 if (response.isSuccessful) {
-                    // Extract rate limit headers
+                    //Extract rate limit headers
                     val rateLimit = response.headers()["X-RateLimit-Limit"]?.toInt()
                     val rateLimitRemaining = response.headers()["X-RateLimit-Remaining"]?.toInt()
                     val rateLimitReset = response.headers()["X-RateLimit-Reset"]?.toLong()
-                    Log.d(TAG, "RateLimit: $rateLimit, Remaining: $rateLimitRemaining, Reset: $rateLimitReset")
-
+                    Log.d(
+                        TAG,
+                        "RateLimit: $rateLimit, Remaining: $rateLimitRemaining, Reset: $rateLimitReset"
+                    )
                     val productInfo = response.body()?.items?.firstOrNull()
                     productInfo?.let {
-                        Log.d(TAG, "Product name: ${it.title}")
-                        // Now you have your product info. Launch the ProductDetailsActivity with this info
-                        val intent = Intent(this@Inventory, ProductDetails::class.java).apply {
-                            putExtra("BARCODE_NUMBER", barcode) // Pass the barcode number
-                            putExtra("PRODUCT_NAME", it.title)
-                            putExtra("PRODUCT_IMAGE_URL", it.images.firstOrNull())
+                        val imageUrl = it.images.firstOrNull() ?: ""
+                        val productName = it.title ?: ""
+                        launchProductDetails(barcode, productName, imageUrl)
                         }
-                        startActivity(intent)
-                    } ?: run {
-                        Log.d(TAG, "Product info is null or empty")
-                    }
                 } else {
-                    Log.e(TAG, "API call failed with response code ${response.code()} and message: ${response.errorBody()?.string()}")
+                    Log.e(TAG, "API call failed with response code ${response.code()} and message: " +
+                            "${response.errorBody()?.string()}")
                 }
             }
 
@@ -176,5 +213,14 @@ class Inventory : AppCompatActivity() {
                 Log.e(TAG, "API call failed with error: ${t.message}")
             }
         })
+    }
+
+    private fun launchProductDetails(barcode: String, title: String, imageUrl: String) {
+        val intent = Intent(this, ProductDetails::class.java).apply {
+            putExtra("BARCODE_NUMBER", barcode)
+            putExtra("PRODUCT_NAME", title)
+            putExtra("PRODUCT_IMAGE_URL", imageUrl)
+        }
+        startActivity(intent)
     }
 }
