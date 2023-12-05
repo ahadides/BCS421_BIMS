@@ -11,23 +11,23 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        // Sample data
-        val items = listOf(
-            Item(R.drawable.ic_test_pic_foreground, "Item 12334567759402834", 5, "Aisle 3"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 8", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 2124", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 359r834", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 2148u21498", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 1", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 9", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 3", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 5", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
-            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
-        )
+//        // Sample data
+//        val items = listOf(
+//            Item(R.drawable.ic_test_pic_foreground, "Item 12334567759402834", 5, "Aisle 3"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 8", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 2124", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 359r834", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 2148u21498", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 1", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 9", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 3", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 5", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
+//            Item(R.drawable.ic_test_pic_foreground, "Item 2", 3, "Aisle 4"),
+//        )
 
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
