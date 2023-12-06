@@ -11,5 +11,4 @@ data class ProductItem(
     val ean: String,
     val title: String,
     val images: List<String>
-    // ... add other fields
 )
