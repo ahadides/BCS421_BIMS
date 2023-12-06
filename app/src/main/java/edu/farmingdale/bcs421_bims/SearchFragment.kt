@@ -47,6 +47,21 @@ class SearchFragment : Fragment() {
                 //Setup the adapter with the fetched items
                 val adapter = InventorySearchAdapter(items) { clickedItem ->
                     //Handle the click event for the specific item (clickedItem)
+                    val bundle = Bundle()
+                    bundle.putString("itemImage", clickedItem.imageUrl)
+                    bundle.putString("itemUPC", clickedItem.barcodeNumber)
+                    bundle.putString("itemName", clickedItem.productName)
+                    bundle.putString("itemQuantity", clickedItem.quantity)
+                    bundle.putString("itemLocation", clickedItem.location)
+
+                    val itemFragment = ItemFragment()
+                    itemFragment.arguments = bundle
+
+                    // Replace the current fragment with ItemFragment
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fram_layout, itemFragment)
+                        .addToBackStack(null)
+                        .commit()
                 }
                 recyclerView.adapter = adapter
             }
