@@ -5,5 +5,6 @@ data class Item(
     val barcodeNumber: String = "",
     val productName: String = "",
     val quantity: String = "",
-    val location: String = ""
+    val location: String = "",
+    var key: String = ""
 )

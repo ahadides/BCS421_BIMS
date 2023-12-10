@@ -7,8 +7,9 @@
         android:background="@color/BimColorBlue"
         tools:context=".ItemFragment"
         tools:visibility="visible">
+
         <include
-            android:id="@+id/include"
+            android:id="@+id/toolBar"
             layout="@layout/toolbar" />
 
         <TextView
@@ -53,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/include"
+            app:layout_constraintTop_toTopOf="@+id/toolBar"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView

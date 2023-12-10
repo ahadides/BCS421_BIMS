@@ -1,11 +1,13 @@
 package edu.farmingdale.bcs421_bims
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
@@ -17,9 +19,12 @@ import java.util.*
 class ProductDetails : AppCompatActivity() {
 
     private lateinit var binding: ActivityProductDetailsBinding
+    val sharedViewModel: SharedViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProductDetailsBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
 
         val barcodeNumber = intent.getStringExtra("BARCODE_NUMBER")
@@ -32,14 +37,35 @@ class ProductDetails : AppCompatActivity() {
         binding.tvBarcodeNumber.text = "Barcode: $barcodeNumber"
         binding.tvProductName.text = "Product Name: $productName"
 
+
+
+        // Set the listener
+
         binding.bnSubmit.setOnClickListener {
+
             val quantity = binding.etQuantity.text.toString()
             val location = binding.etLocation.text.toString()
-            uploadData(barcodeNumber, productName, productImageUrl, quantity, location)
+
+            Toast.makeText(this, "step2", Toast.LENGTH_LONG).show()
+
+            val bundle = Bundle().apply {
+                putString("itemImage", productImageUrl)
+                putString("itemUPC", barcodeNumber)
+                putString("itemName", productName)
+                putString("itemQuantity", quantity)
+                putString("itemLocation", location)
+            }
+            sharedViewModel.dataToPass.value = bundle
+
+            finish()
+
+
         }
     }
 
-    private fun uploadData(barcode: String?, productName: String?, imageUrl: String?, quantity: String, location: String) {
+
+
+    /*private fun uploadData(barcode: String?, productName: String?, imageUrl: String?, quantity: String, location: String) {
         Picasso.get().load(imageUrl).into(object : Target {
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                 //Convert bitmap to byte array
@@ -84,5 +110,7 @@ class ProductDetails : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
+
+
 }
