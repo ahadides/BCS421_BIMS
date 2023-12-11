@@ -70,6 +70,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation ("com.google.android.material:material:<version>")
     implementation ("com.google.protobuf:protobuf-java:3.17.3")
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
 
 
 }
