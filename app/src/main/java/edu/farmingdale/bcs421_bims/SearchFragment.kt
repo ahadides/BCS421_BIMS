@@ -11,12 +11,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import edu.farmingdale.bcs421_bims.databinding.FragmentSearchBinding
+import java.util.Arrays
 import java.util.Locale
 
 class SearchFragment : Fragment() {
@@ -35,6 +39,14 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+
+//        // Initialize the Mobile Ads SDK.
+//        MobileAds.initialize(requireContext()) {}
+//
+//        // Load the ad.
+//        val adRequest = AdRequest.Builder().build()
+//        binding.adView.loadAd(adRequest)
+// Use RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("045A8D710A23DFE2BF8625E333DBBB0F"))
 
         val fab = binding.addButton
 
