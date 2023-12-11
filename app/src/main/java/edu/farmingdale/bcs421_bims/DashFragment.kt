@@ -34,7 +34,24 @@ class DashFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        lowInventoryAdapter = LowInventoryAdapter()
+        lowInventoryAdapter = LowInventoryAdapter { clickedProduct ->
+            // Here you convert clickedProduct to the format expected by ItemFragment
+            // and pass it as arguments
+            val bundle = Bundle().apply {
+                putString("itemName", clickedProduct.productName)
+                putString("itemQuantity", clickedProduct.quantity)
+                // Add other details to the bundle
+            }
+
+            val itemFragment = ItemFragment().apply {
+                arguments = bundle
+            }
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fram_layout, itemFragment)
+                .addToBackStack(null)
+                .commit()
+        }
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = lowInventoryAdapter
@@ -78,7 +95,7 @@ class DashFragment : Fragment() {
 
 data class Product(val productName: String = "", val quantity: String = "")
 
-class LowInventoryAdapter : RecyclerView.Adapter<LowInventoryAdapter.ProductViewHolder>() {
+class LowInventoryAdapter(private val onItemClick: (Product) -> Unit) : RecyclerView.Adapter<LowInventoryAdapter.ProductViewHolder>() {
     private var products = mutableListOf<Product>()
 
 
@@ -97,6 +114,7 @@ class LowInventoryAdapter : RecyclerView.Adapter<LowInventoryAdapter.ProductView
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = products[position]
         holder.bind(product)
+        holder.itemView.setOnClickListener { onItemClick(product) }
     }
 
     override fun getItemCount(): Int = products.size
