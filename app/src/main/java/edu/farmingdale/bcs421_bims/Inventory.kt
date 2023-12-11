@@ -2,6 +2,7 @@ package edu.farmingdale.bcs421_bims
 
 import android.content.pm.PackageManager
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -38,6 +39,7 @@ class Inventory : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1001
+        private const val PRODUCT_DETAILS_REQUEST_CODE = 1002
         private val TAG = Inventory::class.java.simpleName
     }
 
@@ -222,6 +224,40 @@ class Inventory : AppCompatActivity() {
             putExtra("PRODUCT_NAME", title)
             putExtra("PRODUCT_IMAGE_URL", imageUrl)
         }
-        startActivity(intent)
+        startActivityForResult(intent, PRODUCT_DETAILS_REQUEST_CODE)
+        //finish()
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PRODUCT_DETAILS_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val bundle = data?.extras
+
+            val resultIntent = bundle?.let { Intent().putExtras(it) }
+            setResult(Activity.RESULT_OK, resultIntent)
+
+            // Check if the bundle is not null before using its contents
+            bundle?.let {
+                // Use the bundle to perform actions with the received data
+                val itemImage = bundle.getString("itemImage", "")
+                val itemUPC = bundle.getString("itemUPC", "")
+                val itemName = bundle.getString("itemName", "")
+                val itemQuantity = bundle.getString("itemQuantity", "")
+                val itemLocation = bundle.getString("itemLocation", "")
+
+                // Do something with the received data
+                // ...
+
+                // Optional: Toast to check if data is received successfully
+                //Toast.makeText(
+                //    this,
+                //    "Received data: $itemImage, $itemUPC, $itemName, $itemQuantity, $itemLocation",
+                //    Toast.LENGTH_LONG
+              //  ).show()
+                finish()
+            }
+        }
+    }
+
+
 }

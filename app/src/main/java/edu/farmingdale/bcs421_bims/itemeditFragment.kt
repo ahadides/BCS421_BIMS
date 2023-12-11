@@ -19,6 +19,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
@@ -68,7 +69,12 @@ class itemeditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.toolBar.ToolBarText.text = "Edit Item"
+        binding.toolBar.RightIcon.visibility = View.GONE
 
+        binding.toolBar.leftIcon.setOnClickListener{
+            requireActivity().onBackPressed()
+        }
         // Retrieve data from arguments
         val args = arguments
 
@@ -231,13 +237,16 @@ class itemeditFragment : Fragment() {
 
         popupMenu.show()
     }
-    fun startScan() {
-        // Start Activity1 from the fragment
-        val intent = Intent(requireContext(), Inventory::class.java)
-        Toast.makeText(context, "step 1", Toast.LENGTH_LONG).show()
-        startActivity(intent)
 
-    }
+        fun startScan() {
+            // Start Inventory activity from the fragment for scanning
+            val intent = Intent(requireContext(), Inventory::class.java)
+            Toast.makeText(context, "Scanning...", Toast.LENGTH_LONG).show()
+            startActivityForResult(intent, REQUEST_SCAN)
+        }
+
+
+
 
 
 
@@ -309,25 +318,42 @@ class itemeditFragment : Fragment() {
                     // Save the image URL for later use
                     itemImageUrl = selectedImage.toString()
                 }
+                REQUEST_SCAN -> {
+                    // Handle the result from the Inventory activity
+                    // You can access data from the scan if needed
+                    val bundle: Bundle? = data?.extras
+                    bundle?.let { updateUI(it) }
+                    val scannedData = data?.getStringExtra("SCANNED_DATA")
+                    Toast.makeText(context, "Data Scanned", Toast.LENGTH_LONG).show()
+                    // Handle the scanned data as needed
+                }
             }
         }
     }
 
 
-    private fun updateUI() {
+    private fun updateUI(bundle: Bundle) {
         // Update UI with the received data
-        if (itemImageUrl.isNotEmpty()) {
-            Picasso.get().load(itemImageUrl).into(binding.itemImage)
-        } else {
-            // Default image if URL is empty
-            binding.itemImage.setImageResource(R.drawable.logo)
-        }
+        bundle?.let {
+            // Use the bundle to perform actions with the received data
+            itemImageUrl = bundle.getString("itemImage", "")
+            itemUPC = bundle.getString("itemUPC", "")
+            itemName = bundle.getString("itemName", "")
+            itemQuantity = bundle.getString("itemQuantity", "")
+            itemLocation = bundle.getString("itemLocation", "")
+            if (itemImageUrl.isNotEmpty()) {
+                Picasso.get().load(itemImageUrl).into(binding.itemImage)
+            } else {
+                // Default image if URL is empty
+                binding.itemImage.setImageResource(R.drawable.logo)
+            }
 
-        // Set initial values for EditText elements
-        binding.textViewName.setText(itemName)
-        binding.textViewUpc.setText(itemUPC)
-        binding.textViewLoc.setText(itemLocation)
-        binding.textViewQua.setText(itemQuantity)
+            // Set initial values for EditText elements
+            binding.textViewName.setText(itemName)
+            binding.textViewUpc.setText(itemUPC)
+            binding.textViewLoc.setText(itemLocation)
+            binding.textViewQua.setText(itemQuantity)
+        }
     }
 
 

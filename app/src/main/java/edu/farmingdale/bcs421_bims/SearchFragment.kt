@@ -39,7 +39,14 @@ class SearchFragment : Fragment() {
         val fab = binding.addButton
 
         fab.setOnClickListener{
+            val itemEditFragment = itemeditFragment()
+            val fragmentManager = requireActivity().supportFragmentManager
+            val transaction = fragmentManager.beginTransaction()
 
+            transaction.replace(R.id.fram_layout, itemEditFragment)
+
+            transaction.addToBackStack(null)
+            transaction.commit()
         }
         binding.searchField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

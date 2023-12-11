@@ -59,14 +59,17 @@ class ItemFragment : Fragment() {
         binding.textViewLoc.text = "Loc: "+ itemLocation
 
 
-    binding.toolBar.leftIcon.setOnClickListener{
-        findNavController().popBackStack()
-    }
+        binding.toolBar.ToolBarText.text = "Item"
+
+
+        binding.toolBar.leftIcon.setOnClickListener{
+            requireActivity().onBackPressed()
+        }
         binding.toolBar.RightIcon.setOnClickListener{
             showPopupMenu()
         }
 
-        // TODO: Add onClickListener for addQuantity and remQuantity buttons
+
         binding.addQuantity.setOnClickListener {
             val quantityToEdit = binding.QuantityToEdit.text.toString().toIntOrNull()
             if (quantityToEdit == null || quantityToEdit <= 0) {

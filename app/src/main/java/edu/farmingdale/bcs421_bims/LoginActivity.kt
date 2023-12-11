@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
                         //Redirect to main activity or another activity as needed
-                        val homeIntent = Intent(this, HomeActivity::class.java)
+                        val homeIntent = Intent(this, MainActivity::class.java)
                         startActivity(homeIntent)
                         //closes login activity
                         finish()

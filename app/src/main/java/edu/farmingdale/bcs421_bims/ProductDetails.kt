@@ -42,11 +42,8 @@ class ProductDetails : AppCompatActivity(){
         // Set the listener
 
         binding.bnSubmit.setOnClickListener {
-
             val quantity = binding.etQuantity.text.toString()
             val location = binding.etLocation.text.toString()
-
-            Toast.makeText(this, "step2", Toast.LENGTH_LONG).show()
 
             val bundle = Bundle().apply {
                 putString("itemImage", productImageUrl)
@@ -56,6 +53,11 @@ class ProductDetails : AppCompatActivity(){
                 putString("itemLocation", location)
             }
 
+            // Set the result with the bundle
+            val resultIntent = Intent().putExtras(bundle)
+            setResult(Activity.RESULT_OK, resultIntent)
+
+            // Finish the activity
             finish()
 
 

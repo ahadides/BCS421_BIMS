@@ -8,11 +8,11 @@
         android:title="@string/title_dashboard" />
     <item
         android:id="@+id/navigation_Search"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home" />
+        android:icon="@drawable/baseline_search_24"
+        android:title="@string/search" />
     <item
         android:id="@+id/navigation_Settings"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/baseline_settings_24"
         android:title="@string/settings" />
 
 </menu>
