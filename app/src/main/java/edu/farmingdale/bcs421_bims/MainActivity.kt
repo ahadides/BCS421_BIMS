@@ -40,4 +40,6 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.replace(R.id.fram_layout,fragment)
         fragmentTransaction.commit()
     }
+
+
 }

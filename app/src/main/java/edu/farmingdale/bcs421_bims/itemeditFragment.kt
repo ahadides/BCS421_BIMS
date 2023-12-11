@@ -32,7 +32,9 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
-class itemeditFragment : Fragment(),ProductDetailsListener {
+class itemeditFragment : Fragment() {
+
+
 
     private var _binding: FragmentItemeditBinding? = null
     private val binding get() = _binding!!
@@ -47,7 +49,7 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
     lateinit var itemQuantity: String
     lateinit var itemLocation: String
     lateinit var itemKey: String
-    private lateinit var sharedViewModel: SharedViewModel
+
 
     companion object {
 
@@ -93,34 +95,36 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
 
         // Handle ADD button click
         binding.Submit.setOnClickListener {
-            if(itemKey == "") {
-                uploadData(itemUPC, itemName, itemImageUrl, itemQuantity, itemLocation)
-            }else{
-                val item = Item(itemImageUrl ?: "", itemUPC ?: "", itemName ?: "", itemQuantity, itemLocation,itemKey)
-                updateItem(item)
+            itemName = binding.textViewName.text.toString()
+            itemUPC = binding.textViewUpc.text.toString()
+            itemQuantity = binding.textViewQua.text.toString()
+            itemLocation = binding.textViewLoc.text.toString()
 
-            }
+            val item = Item(itemImageUrl ?: "", itemUPC ?: "", itemName ?: "", itemQuantity, itemLocation,itemKey)
+            Toast.makeText(context, item.key, Toast.LENGTH_LONG).show()
+            uploadData(item)
+
+            // Use FragmentManager to pop the back stack and navigate back to the previous fragment
+
+
+
         }
         binding.itemImage.setOnClickListener {
             showPopupMenu()
         }
 
-        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
 
 
         // Observe changes in the sharedViewModel.dataToPass
-        sharedViewModel.dataToPass.observe(viewLifecycleOwner, { bundle ->
-            // Handle the data received in the bundle
-            Toast.makeText(context, "step 3", Toast.LENGTH_LONG).show()
-            onDataSubmitted(bundle)
-        })
+
         // Add more logic here for other buttons or actions
     }
 
     private fun updateItem(newItem: Item) {
         // Create reference to specific item in the Firebase database
         Log.d("ItemFragment", "Updating Product: ${newItem.key} with new name: ${newItem.productName}")
-        val itemRef = FirebaseDatabase.getInstance().getReference("items").child(itemKey)
+        val itemRef = FirebaseDatabase.getInstance().getReference("items").child(newItem.key)
 
         // Update the entire item
         itemRef.setValue(newItem)
@@ -128,6 +132,9 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
                 // Update UI or perform any other tasks after successful update
 
                 Toast.makeText(context, "Item updated in Database", Toast.LENGTH_SHORT).show()
+
+                requireActivity().supportFragmentManager.popBackStack()
+                requireActivity().supportFragmentManager.popBackStack()
             }
             .addOnFailureListener {
                 // Handle any errors in updating the database
@@ -137,9 +144,9 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
 
 
 
-
-    private fun uploadData(barcode: String?, productName: String?, imageUrl: String?, quantity: String, location: String) {
-        Picasso.get().load(imageUrl).into(object : Target {
+    //barcode: String?, productName: String?, imageUrl: String?, quantity: String, location: String
+    private fun uploadData(newItem: Item) {
+        Picasso.get().load(newItem.imageUrl).into(object : Target {
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                 //Convert bitmap to byte array
                 val baos = ByteArrayOutputStream()
@@ -154,7 +161,17 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
                 uploadTask.addOnSuccessListener {
                     imageRef.downloadUrl.addOnSuccessListener { uri ->
                         val firebaseImageUrl = uri.toString()
-                        saveItemDetails(barcode, productName, firebaseImageUrl, quantity, location)
+                        if(newItem.key == "") {
+                            saveItemDetails(
+                                newItem.barcodeNumber,
+                                newItem.productName,
+                                firebaseImageUrl,
+                                newItem.quantity,
+                                newItem.location
+                            )
+                        }else{
+                            updateItem(newItem)
+                        }
                     }
                 }.addOnFailureListener {
                     //Handle unsuccessful uploads
@@ -176,6 +193,7 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
                 //startActivity(homeIntent)
                 //closes ProductDetails activity
                 //finish()
+                onDestroyView()
             } else {
                 //Handle failure
                 task.exception?.let {
@@ -275,17 +293,26 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
             when (requestCode) {
                 REQUEST_IMAGE_CAPTURE -> {
                     // Handle the captured image from the camera (currentPhotoPath will contain the path)
-                    Picasso.get().load(File(currentPhotoPath)).into(binding.itemImage)
+                    val imageFile = File(currentPhotoPath)
+                    // Get the URL of the captured image
+                    val imageUri = Uri.fromFile(imageFile)
+                    // Load the image into the ImageView
+                    Picasso.get().load(imageUri).into(binding.itemImage)
+                    // Save the image URL for later use
+                    itemImageUrl = imageUri.toString()
                 }
                 REQUEST_PICK_IMAGE -> {
                     // Handle the selected image from the gallery
                     val selectedImage: Uri? = data?.data
+                    // Load the image into the ImageView
                     Picasso.get().load(selectedImage).into(binding.itemImage)
+                    // Save the image URL for later use
+                    itemImageUrl = selectedImage.toString()
                 }
-
             }
         }
     }
+
 
     private fun updateUI() {
         // Update UI with the received data
@@ -312,7 +339,7 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
         _binding = null
     }
 
-    override fun onDataSubmitted(bundle: Bundle) {
+   /* fun onDataSubmitted(bundle: Bundle) {
 
 
         itemImageUrl = bundle.getString("itemImage", "")
@@ -323,7 +350,7 @@ class itemeditFragment : Fragment(),ProductDetailsListener {
         Toast.makeText(context, itemName, Toast.LENGTH_LONG).show()
 
         updateUI()
-    }
+    }*/
 
 
 }

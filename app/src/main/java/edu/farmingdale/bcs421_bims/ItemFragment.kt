@@ -24,6 +24,7 @@ class ItemFragment : Fragment() {
     lateinit var itemQuantity: String
     lateinit var itemLocation: String
     lateinit var itemKey: String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,6 +57,7 @@ class ItemFragment : Fragment() {
         binding.textViewUpc.text = "UPC: " + itemUPC
         binding.textViewQua.setText("Quantity: " + itemQuantity)
         binding.textViewLoc.text = "Loc: "+ itemLocation
+
 
     binding.toolBar.leftIcon.setOnClickListener{
         findNavController().popBackStack()

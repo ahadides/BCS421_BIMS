@@ -16,10 +16,10 @@ import edu.farmingdale.bcs421_bims.databinding.ActivityProductDetailsBinding
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-class ProductDetails : AppCompatActivity() {
+class ProductDetails : AppCompatActivity(){
 
     private lateinit var binding: ActivityProductDetailsBinding
-    val sharedViewModel: SharedViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,13 +55,13 @@ class ProductDetails : AppCompatActivity() {
                 putString("itemQuantity", quantity)
                 putString("itemLocation", location)
             }
-            sharedViewModel.dataToPass.value = bundle
 
             finish()
 
 
         }
     }
+
 
 
 

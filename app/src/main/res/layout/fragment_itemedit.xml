@@ -43,15 +43,14 @@
 
     <ImageView
         android:id="@+id/itemImage"
-        android:layout_width="337dp"
-        android:layout_height="205dp"
+        android:layout_width="327dp"
+        android:layout_height="202dp"
         android:layout_marginTop="72dp"
         android:background="@drawable/round_rectangle"
         android:src="@drawable/logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolBar"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/toolBar" />
 
     <EditText
         android:id="@+id/textViewName"
