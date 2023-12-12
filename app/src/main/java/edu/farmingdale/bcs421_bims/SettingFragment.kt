@@ -1,11 +1,15 @@
 package edu.farmingdale.bcs421_bims
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -39,14 +43,12 @@ class SettingFragment : Fragment() {
         }
 
         binding.bnChangePassword.setOnClickListener {
-            //TODO Change password
-
+            showChangePasswordDialog()
         }
 
         binding.bnLogout.setOnClickListener {
            signOut()
         }
-
     }
     override fun onDestroyView() {
         super.onDestroyView()
@@ -70,5 +72,37 @@ class SettingFragment : Fragment() {
             //Close Fragments
             requireActivity().finish()
         }
+    }
+
+    private fun showChangePasswordDialog() {
+        val editTextNewPassword = EditText(context).apply {
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = "Enter new password"
+        }
+        AlertDialog.Builder(requireContext()) // Use requireContext() to get non-null context
+            .setTitle("Change Password")
+            .setView(editTextNewPassword)
+            .setPositiveButton("Submit") { dialog, which ->
+                val newPassword = editTextNewPassword.text.toString()
+                if (newPassword.isNotEmpty()) {
+                    changePassword(newPassword)
+                } else {
+                    Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun changePassword(newPassword: String) {
+        val user = auth.currentUser
+        user?.updatePassword(newPassword)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "Password updated successfully", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Failed to update password: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 }
