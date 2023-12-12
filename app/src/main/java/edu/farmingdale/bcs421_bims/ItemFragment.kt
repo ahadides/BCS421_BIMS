@@ -154,11 +154,8 @@ class ItemFragment : Fragment() {
                 else -> false
             }
         }
-
         popupMenu.show()
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

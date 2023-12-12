@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId){
 
                 R.id.navigation_dashboard -> replaceFragment(DashFragment())
-                R.id.navigation_Settings -> replaceFragment(SearchFragment())
                 R.id.navigation_Search -> replaceFragment(SearchFragment())
+                R.id.navigation_Settings -> replaceFragment(SettingFragment())
                 else ->{
                 }
             }

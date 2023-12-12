@@ -35,12 +35,13 @@ class DashFragment : Fragment() {
 
     private fun setupRecyclerView() {
         lowInventoryAdapter = LowInventoryAdapter { clickedProduct ->
-            // Here you convert clickedProduct to the format expected by ItemFragment
-            // and pass it as arguments
             val bundle = Bundle().apply {
+                putString("itemImage", clickedProduct.imageUrl)
+                putString("itemUPC", clickedProduct.barcodeNumber)
                 putString("itemName", clickedProduct.productName)
                 putString("itemQuantity", clickedProduct.quantity)
-                // Add other details to the bundle
+                putString("itemLocation", clickedProduct.location)
+                putString("itemKey", clickedProduct.key)
             }
 
             val itemFragment = ItemFragment().apply {
@@ -58,19 +59,13 @@ class DashFragment : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fetchInventoryData()
-    }
-
-
     private fun fetchInventoryData() {
         databaseReference = FirebaseDatabase.getInstance().getReference("items")
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val lowInventoryProducts = dataSnapshot.children.mapNotNull { snapshot ->
                     snapshot.getValue(Product::class.java)?.takeIf {
-                        // Convert the quantity to an integer before comparison
+                        //Convert the quantity to an integer before comparison
                         (it.quantity.toIntOrNull() ?: 0) < 3
                     }
                 }
@@ -78,7 +73,7 @@ class DashFragment : Fragment() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle error, could log an error or show a toast
+                //Handle error, could log an error or show a toast
             }
         })
     }
@@ -93,17 +88,23 @@ class DashFragment : Fragment() {
     }
 }
 
-data class Product(val productName: String = "", val quantity: String = "")
+data class Product(
+    val imageUrl: String = "",
+    val barcodeNumber: String = "",
+    val productName: String = "",
+    val quantity: String = "",
+    val location: String = "",
+    val key: String = ""
+)
 
 class LowInventoryAdapter(private val onItemClick: (Product) -> Unit) : RecyclerView.Adapter<LowInventoryAdapter.ProductViewHolder>() {
     private var products = mutableListOf<Product>()
 
-
     fun setProducts(products: List<Product>) {
         this.products = products.toMutableList()
-        notifyDataSetChanged() // Notify any registered observers that the data set has changed.
+        //Notify any registered observers that the data set has changed.
+        notifyDataSetChanged()
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val inflater = LayoutInflater.from(parent.context)

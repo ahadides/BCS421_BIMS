@@ -35,8 +35,6 @@ import java.util.UUID
 
 class itemeditFragment : Fragment() {
 
-
-
     private var _binding: FragmentItemeditBinding? = null
     private val binding get() = _binding!!
 
@@ -53,11 +51,9 @@ class itemeditFragment : Fragment() {
 
 
     companion object {
-
         const val REQUEST_IMAGE_CAPTURE = 1
         const val REQUEST_PICK_IMAGE = 2
         const val REQUEST_SCAN = 3
-
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,9 +71,8 @@ class itemeditFragment : Fragment() {
         binding.toolBar.leftIcon.setOnClickListener{
             requireActivity().onBackPressed()
         }
-        // Retrieve data from arguments
+        //Retrieve data from arguments
         val args = arguments
-
 
         itemImageUrl = args?.getString("itemImage", "") ?: ""
         itemName = args?.getString("itemName", "Default Name") ?: "Default Name"
@@ -85,21 +80,21 @@ class itemeditFragment : Fragment() {
         itemQuantity = args?.getString("itemQuantity", "0") ?: "0"
         itemLocation = args?.getString("itemLocation", "Default Location") ?: "Default Location"
         itemKey = args?.getString("itemKey", "") ?: ""
-        // Load image using Picasso
+        //Load image using Picasso
         if (itemImageUrl.isNotEmpty()) {
             Picasso.get().load(itemImageUrl).into(binding.itemImage)
         } else {
-            // Default image if URL is empty
+            //Default image if URL is empty
             binding.itemImage.setImageResource(R.drawable.person)
         }
 
-        // Set initial values for EditText elements
+        //Set initial values for EditText elements
         binding.textViewName.setText(itemName)
         binding.textViewUpc.setText(itemUPC)
         binding.textViewLoc.setText(itemLocation)
         binding.textViewQua.setText(itemQuantity)
 
-        // Handle ADD button click
+        //Handle ADD button click
         binding.Submit.setOnClickListener {
             itemName = binding.textViewName.text.toString()
             itemUPC = binding.textViewUpc.text.toString()
@@ -107,38 +102,29 @@ class itemeditFragment : Fragment() {
             itemLocation = binding.textViewLoc.text.toString()
 
             val item = Item(itemImageUrl ?: "", itemUPC ?: "", itemName ?: "", itemQuantity, itemLocation,itemKey)
-            Toast.makeText(context, item.key, Toast.LENGTH_LONG).show()
             uploadData(item)
 
-            // Use FragmentManager to pop the back stack and navigate back to the previous fragment
-
-
-
+            //Use FragmentManager to pop the back stack and navigate back to the previous fragment
         }
         binding.itemImage.setOnClickListener {
             showPopupMenu()
         }
+        //Observe changes in the sharedViewModel.dataToPass
 
-
-
-
-        // Observe changes in the sharedViewModel.dataToPass
-
-        // Add more logic here for other buttons or actions
+        //Add more logic here for other buttons or actions
     }
 
     private fun updateItem(newItem: Item) {
-        // Create reference to specific item in the Firebase database
+        //Create reference to specific item in the Firebase database
         Log.d("ItemFragment", "Updating Product: ${newItem.key} with new name: ${newItem.productName}")
         val itemRef = FirebaseDatabase.getInstance().getReference("items").child(newItem.key)
 
-        // Update the entire item
+        //Update the entire item
         itemRef.setValue(newItem)
             .addOnSuccessListener {
-                // Update UI or perform any other tasks after successful update
+                //Update UI or perform any other tasks after successful update
 
                 Toast.makeText(context, "Item updated in Database", Toast.LENGTH_SHORT).show()
-
                 requireActivity().supportFragmentManager.popBackStack()
                 requireActivity().supportFragmentManager.popBackStack()
             }
@@ -147,8 +133,6 @@ class itemeditFragment : Fragment() {
                 Toast.makeText(context, "Failed to update Item in Database", Toast.LENGTH_SHORT).show()
             }
     }
-
-
 
     //barcode: String?, productName: String?, imageUrl: String?, quantity: String, location: String
     private fun uploadData(newItem: Item) {
@@ -209,9 +193,6 @@ class itemeditFragment : Fragment() {
         }
     }
 
-
-
-
     private fun showPopupMenu() {
         val popupMenu = PopupMenu(requireContext(), binding.itemImage)
         popupMenu.inflate(R.menu.imagepopupmenu)
@@ -234,36 +215,28 @@ class itemeditFragment : Fragment() {
                 else -> false
             }
         }
-
         popupMenu.show()
     }
 
         fun startScan() {
-            // Start Inventory activity from the fragment for scanning
+            //Start Inventory activity from the fragment for scanning
             val intent = Intent(requireContext(), Inventory::class.java)
             Toast.makeText(context, "Scanning...", Toast.LENGTH_LONG).show()
             startActivityForResult(intent, REQUEST_SCAN)
         }
 
-
-
-
-
-
-
-
     private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
+            //Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-                // Create the File where the photo should go
+                //Create the File where the photo should go
                 val photoFile: File? = try {
                     createImageFile()
                 } catch (ex: IOException) {
-                    // Error occurred while creating the File
+                    //Error occurred while creating the File
                     null
                 }
-                // Continue only if the File was successfully created
+                //Continue only if the File was successfully created
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
                         requireContext(),
@@ -286,7 +259,7 @@ class itemeditFragment : Fragment() {
             ".jpg", /* suffix */
             storageDir /* directory */
         ).apply {
-            // Save a file path for use with ACTION_VIEW intents
+            //Save a file path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
         }
     }
@@ -301,41 +274,40 @@ class itemeditFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUEST_IMAGE_CAPTURE -> {
-                    // Handle the captured image from the camera (currentPhotoPath will contain the path)
+                    //Handle the captured image from the camera (currentPhotoPath will contain the path)
                     val imageFile = File(currentPhotoPath)
-                    // Get the URL of the captured image
+                    //Get the URL of the captured image
                     val imageUri = Uri.fromFile(imageFile)
-                    // Load the image into the ImageView
+                    //Load the image into the ImageView
                     Picasso.get().load(imageUri).into(binding.itemImage)
-                    // Save the image URL for later use
+                    //Save the image URL for later use
                     itemImageUrl = imageUri.toString()
                 }
                 REQUEST_PICK_IMAGE -> {
-                    // Handle the selected image from the gallery
+                    //Handle the selected image from the gallery
                     val selectedImage: Uri? = data?.data
-                    // Load the image into the ImageView
+                    //Load the image into the ImageView
                     Picasso.get().load(selectedImage).into(binding.itemImage)
-                    // Save the image URL for later use
+                    //Save the image URL for later use
                     itemImageUrl = selectedImage.toString()
                 }
                 REQUEST_SCAN -> {
-                    // Handle the result from the Inventory activity
-                    // You can access data from the scan if needed
+                    //Handle the result from the Inventory activity
+                    //You can access data from the scan if needed
                     val bundle: Bundle? = data?.extras
                     bundle?.let { updateUI(it) }
                     val scannedData = data?.getStringExtra("SCANNED_DATA")
                     Toast.makeText(context, "Data Scanned", Toast.LENGTH_LONG).show()
-                    // Handle the scanned data as needed
+                    //Handle the scanned data as needed
                 }
             }
         }
     }
 
-
     private fun updateUI(bundle: Bundle) {
-        // Update UI with the received data
+        //Update UI with the received data
         bundle?.let {
-            // Use the bundle to perform actions with the received data
+            //Use the bundle to perform actions with the received data
             itemImageUrl = bundle.getString("itemImage", "")
             itemUPC = bundle.getString("itemUPC", "")
             itemName = bundle.getString("itemName", "")
@@ -344,11 +316,10 @@ class itemeditFragment : Fragment() {
             if (itemImageUrl.isNotEmpty()) {
                 Picasso.get().load(itemImageUrl).into(binding.itemImage)
             } else {
-                // Default image if URL is empty
+                //Default image if URL is empty
                 binding.itemImage.setImageResource(R.drawable.logo)
             }
-
-            // Set initial values for EditText elements
+            //Set initial values for EditText elements
             binding.textViewName.setText(itemName)
             binding.textViewUpc.setText(itemUPC)
             binding.textViewLoc.setText(itemLocation)
@@ -356,29 +327,10 @@ class itemeditFragment : Fragment() {
         }
     }
 
-
-
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-   /* fun onDataSubmitted(bundle: Bundle) {
-
-
-        itemImageUrl = bundle.getString("itemImage", "")
-        itemName = bundle.getString("itemName", "Default Name") ?: "Default Name"
-        itemUPC = bundle.getString("itemUPC", "123456789") ?: "123456789"
-        itemQuantity = bundle.getString("itemQuantity", "0") ?: "0"
-        itemLocation = bundle.getString("itemLocation", "Default Location") ?: "Default Location"
-        Toast.makeText(context, itemName, Toast.LENGTH_LONG).show()
-
-        updateUI()
-    }*/
-
-
 }
 
 

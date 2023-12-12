@@ -84,7 +84,7 @@ class SearchFragment : Fragment() {
             val itemFragment = ItemFragment()
             itemFragment.arguments = bundle
 
-            // Replace the current fragment with ItemFragment
+            //Replace the current fragment with ItemFragment
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fram_layout, itemFragment)
                 .addToBackStack(null)
