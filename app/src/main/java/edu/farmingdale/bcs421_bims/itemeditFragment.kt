@@ -152,12 +152,14 @@ class itemeditFragment : Fragment() {
                     imageRef.downloadUrl.addOnSuccessListener { uri ->
                         val firebaseImageUrl = uri.toString()
                         if(newItem.key == "") {
+                            Toast.makeText(context, "New Item added", Toast.LENGTH_SHORT).show()
                             saveItemDetails(
                                 newItem.barcodeNumber,
                                 newItem.productName,
                                 firebaseImageUrl,
                                 newItem.quantity,
                                 newItem.location
+
                             )
                         }else{
                             updateItem(newItem)
