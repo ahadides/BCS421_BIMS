@@ -35,7 +35,9 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-
+        binding.toolBar.ToolBarText.text = "Search"
+        binding.toolBar.RightIcon.visibility = View.GONE
+        binding.toolBar.leftIcon.visibility = View.GONE
         val fab = binding.addButton
 
         fab.setOnClickListener{

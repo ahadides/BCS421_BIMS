@@ -9,6 +9,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import edu.farmingdale.bcs421_bims.databinding.ActivityMainBinding
 import androidx.fragment.app.Fragment
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +23,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         replaceFragment(DashFragment())
 
+        // Initialize the Mobile Ads SDK.
+        MobileAds.initialize(this) {}
+
+        // Load the ad.
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
+        
         binding.navView.setOnItemSelectedListener {
 
             when(it.itemId){

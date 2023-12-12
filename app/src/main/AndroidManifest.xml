@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BCS421_BIMS"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7381987675152058~9943568509"/>
         <activity
             android:name=".Scan"
             android:exported="false"
@@ -47,19 +50,14 @@
         <activity
             android:name=".Inventory"
             android:exported="false" />
-        <activity
-            android:name=".ItemActivity"
-            android:exported="false" />
+
         <activity
             android:name=".RegistrationActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
-        <activity
-            android:name=".SearchActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name=".SplashActivity"
             android:exported="true">

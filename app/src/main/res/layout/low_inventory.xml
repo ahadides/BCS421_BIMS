@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:fontFamily="sans-serif-medium"
+        android:textColor="@color/white"
         android:text="Product Name"
         android:layout_marginBottom="4dp" />
 
