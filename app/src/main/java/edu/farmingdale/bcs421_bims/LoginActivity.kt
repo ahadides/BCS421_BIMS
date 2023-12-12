@@ -110,7 +110,8 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Google sign-in successful", Toast.LENGTH_SHORT).show()
                     //Redirect to HomeActivity for debug purposes
                     //Change
-                    val homeIntent = Intent(this, HomeActivity::class.java)
+//                    val homeIntent = Intent(this, HomeActivity::class.java)
+                    val homeIntent = Intent(this, MainActivity::class.java)
                     startActivity(homeIntent)
                     //closes login activity
                     finish()
