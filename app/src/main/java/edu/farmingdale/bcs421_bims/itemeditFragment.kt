@@ -3,6 +3,7 @@ package edu.farmingdale.bcs421_bims
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -22,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import edu.farmingdale.bcs421_bims.databinding.FragmentItemeditBinding
@@ -37,18 +39,15 @@ class itemeditFragment : Fragment() {
 
     private var _binding: FragmentItemeditBinding? = null
     private val binding get() = _binding!!
-
-    private val REQUEST_IMAGE_CAPTURE = 1
-    private val REQUEST_PICK_IMAGE = 2
-    private val REQUEST_SCAN = 3
     private var currentPhotoPath: String? = null
-    lateinit var itemImageUrl: String
-    lateinit var itemName: String
-    lateinit var itemUPC: String
-    lateinit var itemQuantity: String
-    lateinit var itemLocation: String
-    lateinit var itemKey: String
-
+    private var itemImageUrl: String? = null
+    private lateinit var itemName: String
+    private lateinit var itemUPC: String
+    private lateinit var itemQuantity: String
+    private lateinit var itemLocation: String
+    private lateinit var itemKey: String
+    //This flag to track if the image has been changed
+    private var isImageChanged = false
 
     companion object {
         const val REQUEST_IMAGE_CAPTURE = 1
@@ -80,12 +79,16 @@ class itemeditFragment : Fragment() {
         itemQuantity = args?.getString("itemQuantity", "0") ?: "0"
         itemLocation = args?.getString("itemLocation", "Default Location") ?: "Default Location"
         itemKey = args?.getString("itemKey", "") ?: ""
+
         //Load image using Picasso
-        if (itemImageUrl.isNotEmpty()) {
-            Picasso.get().load(itemImageUrl).into(binding.itemImage)
-        } else {
-            //Default image if URL is empty
+        if (itemImageUrl.isNullOrEmpty()) {
+            //Default image
             binding.itemImage.setImageResource(R.drawable.person)
+            isImageChanged = false
+        } else {
+            //Image set from upload
+            Picasso.get().load(itemImageUrl).into(binding.itemImage)
+            isImageChanged = true
         }
 
         //Set initial values for EditText elements
@@ -96,10 +99,17 @@ class itemeditFragment : Fragment() {
 
         //Handle ADD button click
         binding.Submit.setOnClickListener {
+            Log.d("EditItemFragment", "Submit button clicked")
+            if (!isImageChanged) {
+                Toast.makeText(context, "Please add an image for the item", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             itemName = binding.textViewName.text.toString()
             itemUPC = binding.textViewUpc.text.toString()
             itemQuantity = binding.textViewQua.text.toString()
             itemLocation = binding.textViewLoc.text.toString()
+            Log.d("EditItemFragment", "Item Name: $itemName, UPC: $itemUPC, Quantity: $itemQuantity, Location: $itemLocation")
 
             val item = Item(itemImageUrl ?: "", itemUPC ?: "", itemName ?: "", itemQuantity, itemLocation,itemKey)
             uploadData(item)
@@ -112,6 +122,33 @@ class itemeditFragment : Fragment() {
         //Observe changes in the sharedViewModel.dataToPass
 
         //Add more logic here for other buttons or actions
+    }
+
+    private fun setScaledImage(imageUri: Uri) {
+        val targetImageViewWidth = binding.itemImage.width
+        val targetImageViewHeight = binding.itemImage.height
+
+        val bitmapOptions = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+
+        requireContext().contentResolver.openInputStream(imageUri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream, null, bitmapOptions)
+        }
+
+        val photoWidth = bitmapOptions.outWidth
+        val photoHeight = bitmapOptions.outHeight
+
+        val scaleFactor = Math.max(photoWidth / targetImageViewWidth, photoHeight / targetImageViewHeight)
+
+        bitmapOptions.inJustDecodeBounds = false
+        bitmapOptions.inSampleSize = scaleFactor
+
+        requireContext().contentResolver.openInputStream(imageUri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream, null, bitmapOptions)?.also { bitmap ->
+                binding.itemImage.setImageBitmap(bitmap)
+            }
+        }
     }
 
     private fun updateItem(newItem: Item) {
@@ -134,7 +171,6 @@ class itemeditFragment : Fragment() {
             }
     }
 
-    //barcode: String?, productName: String?, imageUrl: String?, quantity: String, location: String
     private fun uploadData(newItem: Item) {
         Picasso.get().load(newItem.imageUrl).into(object : Target {
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
@@ -159,6 +195,7 @@ class itemeditFragment : Fragment() {
                                 newItem.quantity,
                                 newItem.location
                             )
+                            Toast.makeText(context, "Item added", Toast.LENGTH_SHORT).show()
                         }else{
                             updateItem(newItem)
                         }
@@ -167,7 +204,6 @@ class itemeditFragment : Fragment() {
                     //Handle unsuccessful uploads
                 }
             }
-
             override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
             override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
         })
@@ -178,11 +214,9 @@ class itemeditFragment : Fragment() {
         val databaseRef = FirebaseDatabase.getInstance().getReference("items")
         databaseRef.push().setValue(item).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                //Handle successful upload
-                //val homeIntent = Intent(context, MainActivity::class.java)
-                //startActivity(homeIntent)
-                //closes ProductDetails activity
-                //finish()
+                Toast.makeText(context, "Item saved successfully", Toast.LENGTH_LONG).show()
+                //Navigate back to the Search Fragment
+                requireActivity().supportFragmentManager.popBackStack()
                 onDestroyView()
             } else {
                 //Handle failure
@@ -282,14 +316,15 @@ class itemeditFragment : Fragment() {
                     Picasso.get().load(imageUri).into(binding.itemImage)
                     //Save the image URL for later use
                     itemImageUrl = imageUri.toString()
+                    isImageChanged = true
                 }
                 REQUEST_PICK_IMAGE -> {
                     //Handle the selected image from the gallery
-                    val selectedImage: Uri? = data?.data
-                    //Load the image into the ImageView
-                    Picasso.get().load(selectedImage).into(binding.itemImage)
-                    //Save the image URL for later use
-                    itemImageUrl = selectedImage.toString()
+                    data?.data?.let { imageUri ->
+                        setScaledImage(imageUri)
+                        itemImageUrl = imageUri.toString()
+                        isImageChanged = true
+                    }
                 }
                 REQUEST_SCAN -> {
                     //Handle the result from the Inventory activity
@@ -299,6 +334,7 @@ class itemeditFragment : Fragment() {
                     val scannedData = data?.getStringExtra("SCANNED_DATA")
                     Toast.makeText(context, "Data Scanned", Toast.LENGTH_LONG).show()
                     //Handle the scanned data as needed
+                    isImageChanged = true
                 }
             }
         }
@@ -313,7 +349,8 @@ class itemeditFragment : Fragment() {
             itemName = bundle.getString("itemName", "")
             itemQuantity = bundle.getString("itemQuantity", "")
             itemLocation = bundle.getString("itemLocation", "")
-            if (itemImageUrl.isNotEmpty()) {
+
+            if (!itemImageUrl.isNullOrEmpty()) {
                 Picasso.get().load(itemImageUrl).into(binding.itemImage)
             } else {
                 //Default image if URL is empty
@@ -326,12 +363,8 @@ class itemeditFragment : Fragment() {
             binding.textViewQua.setText(itemQuantity)
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
-
-
-
