@@ -108,7 +108,8 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Google sign-in successful", Toast.LENGTH_SHORT).show()
-                    //Redirect to main activity or another activity as needed
+                    //Redirect to HomeActivity for debug purposes
+                    //Change
                     val homeIntent = Intent(this, HomeActivity::class.java)
                     startActivity(homeIntent)
                     //closes login activity
